@@ -23,8 +23,11 @@ async function surroundWithPragma(edit, uri, diagnostic) {
     const editor = vscode.window.activeTextEditor;
     const document = await vscode.workspace.openTextDocument(uri);
    
+    let comment = await vscode.window.showInputBox({placeHolder: 'Comment for pragma'});
+    if(!comment.startsWith('//') && comment.length>0)
+        comment = `//${comment}`;
     return editor.edit(editBuilder=>{
-        addPragmaText(editBuilder, document.lineAt(diagnostic.range.start.line),disable);
+        addPragmaText(editBuilder, document.lineAt(diagnostic.range.start.line),`${disable} ${comment}`);
         addPragmaText(editBuilder, document.lineAt(diagnostic.range.end.line+1),restore);
     });
 }
